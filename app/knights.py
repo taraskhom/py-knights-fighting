@@ -1,36 +1,41 @@
+from __future__ import annotations
+
+from app.armour import Armour
+from app.weapon import Weapon
+from app.potion import Potion
+
+
 class Knight:
 
     def __init__(self, knight: dict) -> None:
         self.name = knight["name"]
         self.power = knight["power"]
         self.hp = knight["hp"]
-        self.armour = knight["armour"]
-        self.weapon = knight["weapon"]
-        self.potion = knight["potion"]
+        self.armour = Armour(knight["armour"])
+        self.weapon = Weapon(knight["weapon"])
+        self.potion = Potion(knight["potion"])
         self.protection = 0
 
     def apply_armour(self) -> None:
-        if self.armour:
-            for item in self.armour:
-                self.protection += item["protection"]
+        self.protection += self.armour.protection
 
     def apply_weapon(self) -> None:
-        self.power += self.weapon["power"]
+        self.power += self.weapon.power
 
     def apply_potion(self) -> None:
-        if self.potion is not None:
-            if self.potion["effect"].get("power"):
-                self.power += self.potion["effect"]["power"]
-            if self.potion["effect"].get("hp"):
-                self.hp += self.potion["effect"]["hp"]
-            if self.potion["effect"].get("protection"):
-                self.protection += self.potion["effect"]["protection"]
+        self.power += self.potion.get_effect("power")
+        self.hp += self.potion.get_effect("hp")
+        self.protection += self.potion.get_effect("protection")
 
     def battle_preparation(self) -> None:
         self.apply_armour()
         self.apply_weapon()
         self.apply_potion()
 
+    def attack(self, enemy: Knight) -> None:
+        enemy.hp -= max(0, self.power - enemy.protection)
+        enemy.fell_in_battle()
+
     def fell_in_battle(self) -> None:
-        if self.hp <= 0:
+        if self.hp < 0:
             self.hp = 0

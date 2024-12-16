@@ -1,46 +1,31 @@
-from app.Data.knightsConfig import KNIGHTS
+from app.data.knights_config import KNIGHTS
 from app.knights import Knight
 
 
 def battle(knights_config: dict) -> dict:
     # BATTLE PREPARATIONS:
 
-    lancelot = Knight(knights_config["lancelot"])
-    lancelot.battle_preparation()
+    knight_names = ["lancelot", "mordred", "arthur", "red_knight"]
+    knights = {name: Knight(knights_config[name]) for name in knight_names}
 
-    mordred = Knight(knights_config["mordred"])
-    mordred.battle_preparation()
-
-    arthur = Knight(knights_config["arthur"])
-    arthur.battle_preparation()
-
-    red_knight = Knight(knights_config["red_knight"])
-    red_knight.battle_preparation()
+    for knight in knights.values():
+        knight.battle_preparation()
 
     # BATTLE:
 
-    # 1 Lancelot vs Mordred:
-    lancelot.hp -= mordred.power - lancelot.protection
-    mordred.hp -= lancelot.power - mordred.protection
+    duels = [
+        ("lancelot", "mordred"),
+        ("arthur", "red_knight")
+    ]
 
-    # check if someone fell in battle
-    lancelot.fell_in_battle()
-    mordred.fell_in_battle()
-
-    # 2 Arthur vs Red Knight:
-    arthur.hp -= red_knight.power - arthur.protection
-    red_knight.hp -= arthur.power - red_knight.protection
-
-    # check if someone fell in battle
-    arthur.fell_in_battle()
-    red_knight.fell_in_battle()
+    for knight1_name, knight2_name in duels:
+        knights[knight1_name].attack(knights[knight2_name])
+        knights[knight2_name].attack(knights[knight1_name])
 
     # Return battle results:
     return {
-        lancelot.name: lancelot.hp,
-        arthur.name: arthur.hp,
-        mordred.name: mordred.hp,
-        red_knight.name: red_knight.hp
+        name.title().replace("_", " "): knight.hp
+        for name, knight in knights.items()
     }
 
 
