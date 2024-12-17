@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from app.armour import Armour
-from app.weapon import Weapon
-from app.potion import Potion
+from app.knight_package.armour import Armour
+from app.knight_package.weapon import Weapon
+from app.knight_package.potion import Potion
 
 
 class Knight:
